@@ -1,0 +1,23 @@
+# Source (consumers get only the compiled dist/)
+src/
+tests/
+
+# Config files not needed at runtime
+.eslintrc.json
+.prettierrc
+.github/
+jest.config.ts
+tsconfig.json
+tsconfig.build.json
+tsup.config.ts
+
+# Dev artifacts
+node_modules/
+coverage/
+*.log
+logs/
+
+# Misc
+.DS_Store
+.env*
+CONTRIBUTING.md
