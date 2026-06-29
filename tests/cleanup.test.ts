@@ -81,9 +81,7 @@ describe('enforceRetention', () => {
   });
 
   it('does not throw when the log directory does not exist', async () => {
-    await expect(
-      enforceRetention(path.join(tmpDir, 'nonexistent'), 4),
-    ).resolves.not.toThrow();
+    await expect(enforceRetention(path.join(tmpDir, 'nonexistent'), 4)).resolves.not.toThrow();
   });
 
   it('calls onError when a file cannot be deleted', async () => {

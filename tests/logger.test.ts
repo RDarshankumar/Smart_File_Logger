@@ -93,7 +93,10 @@ describe('file output (json mode)', () => {
     const logFile = files.find((f) => f.endsWith('.log'))!;
     const content = await fs.readFile(path.join(tmpDir, logFile), 'utf8');
 
-    const lines = content.trim().split('\n').filter((l) => l.trim());
+    const lines = content
+      .trim()
+      .split('\n')
+      .filter((l) => l.trim());
     for (const line of lines) {
       expect(() => JSON.parse(line)).not.toThrow();
     }

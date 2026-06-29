@@ -111,12 +111,20 @@ describe('needsDaySeparator', () => {
   });
 
   it('returns false when same date as last write', () => {
-    const state = { currentFilePath: 'x.log', lastWrittenDate: '2026-06-29', weekStart: '2026-06-29' };
+    const state = {
+      currentFilePath: 'x.log',
+      lastWrittenDate: '2026-06-29',
+      weekStart: '2026-06-29',
+    };
     expect(needsDaySeparator(state, '2026-06-29')).toBe(false);
   });
 
   it('returns true when date has changed', () => {
-    const state = { currentFilePath: 'x.log', lastWrittenDate: '2026-06-29', weekStart: '2026-06-29' };
+    const state = {
+      currentFilePath: 'x.log',
+      lastWrittenDate: '2026-06-29',
+      weekStart: '2026-06-29',
+    };
     expect(needsDaySeparator(state, '2026-06-30')).toBe(true);
   });
 });

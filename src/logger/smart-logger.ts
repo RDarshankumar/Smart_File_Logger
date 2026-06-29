@@ -14,12 +14,27 @@
  * The class never throws — all I/O errors are caught internally.
  */
 
-import type { Logger, LogLevel, LogMetadata, LogEntry, HttpRequest, HttpResponse, NextFunction } from '../types/index.js';
+import type {
+  Logger,
+  LogLevel,
+  LogMetadata,
+  LogEntry,
+  HttpRequest,
+  HttpResponse,
+  NextFunction,
+} from '../types/index.js';
 import type { LoggerConfig } from '../config/index.js';
 import { FileWriter, needsWeekRotation, needsDaySeparator } from '../writer/index.js';
 import { formatEntry } from '../formatter/index.js';
 import { enforceRetention } from '../cleanup/index.js';
-import { getDayName, formatDate, formatTime, toISODate, getWeekStart, getLogFileName } from '../utils/date.js';
+import {
+  getDayName,
+  formatDate,
+  formatTime,
+  toISODate,
+  getWeekStart,
+  getLogFileName,
+} from '../utils/date.js';
 import { buildConsoleSeparator } from '../formatter/text.formatter.js';
 import path from 'path';
 
@@ -101,18 +116,22 @@ export class SmartLogger implements Logger {
   /**
    * Core log dispatch. All five public methods delegate here.
    *
-   * Marked `async` so callers can `await` it and be sure the console write
-   * has occurred synchronously before the promise resolves.
+   * Returns a resolved Promise so callers can `await` it and be sure the
+   * console write has occurred synchronously before the promise resolves.
    * The file write is intentionally fire-and-forget via the write queue.
    */
-  private async log(level: LogLevel, message: string, metadata?: LogMetadata): Promise<void> {
+  private log(level: LogLevel, message: string, metadata?: LogMetadata): Promise<void> {
     const now = new Date();
     const entry = this.buildEntry(level, message, now, metadata);
     const isoDate = toISODate(now);
 
     // ── Week rotation detection (synchronous via optimistic cache) ──
     const shouldRotate = needsWeekRotation(
-      { currentFilePath: this.writer.currentFilePath, lastWrittenDate: this.lastKnownDate, weekStart: this.lastKnownWeekStart },
+      {
+        currentFilePath: this.writer.currentFilePath,
+        lastWrittenDate: this.lastKnownDate,
+        weekStart: this.lastKnownWeekStart,
+      },
       now,
     );
 
@@ -122,7 +141,11 @@ export class SmartLogger implements Logger {
     }
 
     const showSeparator = needsDaySeparator(
-      { currentFilePath: this.writer.currentFilePath, lastWrittenDate: this.lastKnownDate, weekStart: this.lastKnownWeekStart },
+      {
+        currentFilePath: this.writer.currentFilePath,
+        lastWrittenDate: this.lastKnownDate,
+        weekStart: this.lastKnownWeekStart,
+      },
       isoDate,
     );
 
@@ -142,7 +165,9 @@ export class SmartLogger implements Logger {
 
     // ── File output ──
     if (this.config.file) {
-      const line = this.config.json ? formatted.jsonLine + '\n' : formatted.daySeparator + formatted.textLine + '\n';
+      const line = this.config.json
+        ? formatted.jsonLine + '\n'
+        : formatted.daySeparator + formatted.textLine + '\n';
 
       const weekStart = toISODate(getWeekStart(now));
       const newFilePath = path.join(this.config.logDir, getLogFileName(now));
@@ -158,6 +183,8 @@ export class SmartLogger implements Logger {
         });
       }
     }
+
+    return Promise.resolve();
   }
 
   /**

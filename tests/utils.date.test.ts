@@ -78,8 +78,16 @@ describe('getWeekStart', () => {
   });
 
   it('returns the same Monday for every day in the week', () => {
-    const dates = ['2026-06-29', '2026-06-30', '2026-07-01', '2026-07-02', '2026-07-03', '2026-07-04', '2026-07-05'];
-    const starts = dates.map(d => toISODate(getWeekStart(new Date(d))));
+    const dates = [
+      '2026-06-29',
+      '2026-06-30',
+      '2026-07-01',
+      '2026-07-02',
+      '2026-07-03',
+      '2026-07-04',
+      '2026-07-05',
+    ];
+    const starts = dates.map((d) => toISODate(getWeekStart(new Date(d))));
     expect(new Set(starts).size).toBe(1);
   });
 
@@ -107,7 +115,7 @@ describe('getLogFileName', () => {
 
   it('all days in the same week produce the same filename', () => {
     const dates = ['2026-06-29', '2026-06-30', '2026-07-01', '2026-07-02'];
-    const names = dates.map(d => getLogFileName(new Date(d)));
+    const names = dates.map((d) => getLogFileName(new Date(d)));
     expect(new Set(names).size).toBe(1);
   });
 });

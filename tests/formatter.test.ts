@@ -25,7 +25,11 @@ describe('buildTextLine', () => {
   });
 
   it('includes metadata as inline JSON', () => {
-    const entry = makeEntry({ level: 'ERROR', message: 'DB Error', metadata: { host: 'localhost' } });
+    const entry = makeEntry({
+      level: 'ERROR',
+      message: 'DB Error',
+      metadata: { host: 'localhost' },
+    });
     const line = buildTextLine(entry);
     expect(line).toContain('{"host":"localhost"}');
   });
