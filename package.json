@@ -48,12 +48,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/smart-file-logger.git"
+    "url": "https://github.com/RDarshankumar/Smart_File_Logger.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/smart-file-logger/issues"
+    "url": "https://github.com/RDarshankumar/Smart_File_Logger/issues"
   },
-  "homepage": "https://github.com/your-username/smart-file-logger#readme",
+  "homepage": "https://github.com/RDarshankumar/Smart_File_Logger#readme",
   "engines": {
     "node": ">=18.0.0"
   },
