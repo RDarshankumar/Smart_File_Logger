@@ -170,6 +170,81 @@ describe('FileWriter (integration)', () => {
     expect(done).toBe(true);
   });
 
+  it('exposes weekStart and lastWrittenDate getters', async () => {
+    const config = {
+      logDir: path.join(tmpDir, 'logs'),
+      retentionWeeks: 4,
+      console: false,
+      file: true,
+      json: false,
+    };
+
+    const writer = new FileWriter(config);
+    const isoDate = toISODate(new Date());
+    const weekStart = toISODate(getWeekStart(new Date()));
+    const filePath = path.join(config.logDir, getLogFileName(new Date()));
+
+    expect(writer.weekStart).toBe(weekStart);
+    expect(writer.lastWrittenDate).toBe('');
+
+    writer.write(isoDate, 'line\n', false, filePath, weekStart);
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+
+    expect(writer.lastWrittenDate).toBe(isoDate);
+  });
+
+  it('rotates to a new file when rotate is true', async () => {
+    const config = {
+      logDir: path.join(tmpDir, 'logs'),
+      retentionWeeks: 4,
+      console: false,
+      file: true,
+      json: false,
+    };
+
+    const writer = new FileWriter(config);
+    const isoDate = toISODate(new Date());
+    const weekStart = toISODate(getWeekStart(new Date()));
+    const firstFile = path.join(config.logDir, getLogFileName(new Date()));
+
+    // Write to the initial file.
+    writer.write(isoDate, 'first-file\n', false, firstFile, weekStart);
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+
+    // Simulate rotation: write to a new file path.
+    const newFile = path.join(config.logDir, 'rotated.log');
+    const newWeekStart = '2026-07-06';
+    writer.write(isoDate, 'rotated-file\n', true, newFile, newWeekStart);
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
+
+    const newContent = await fs.readFile(newFile, 'utf8');
+    expect(newContent).toContain('rotated-file');
+    expect(writer.currentFilePath).toBe(newFile);
+  });
+
+  it('skips ensureDir on the second write (dirReady cache)', async () => {
+    const config = {
+      logDir: path.join(tmpDir, 'logs'),
+      retentionWeeks: 4,
+      console: false,
+      file: true,
+      json: false,
+    };
+
+    const writer = new FileWriter(config);
+    const isoDate = toISODate(new Date());
+    const weekStart = toISODate(getWeekStart(new Date()));
+    const filePath = path.join(config.logDir, getLogFileName(new Date()));
+
+    writer.write(isoDate, 'first\n', false, filePath, weekStart);
+    writer.write(isoDate, 'second\n', false, filePath, weekStart);
+    await new Promise<void>((resolve) => setTimeout(resolve, 300));
+
+    const content = await fs.readFile(filePath, 'utf8');
+    expect(content).toContain('first');
+    expect(content).toContain('second');
+  });
+
   it('does not throw when the directory cannot be created (error callback fires)', async () => {
     // Provide an impossible path (file exists where dir should be).
     const blockerFile = path.join(tmpDir, 'blocker');
