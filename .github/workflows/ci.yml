@@ -104,8 +104,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check NPM_TOKEN is set
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "ERROR: NPM_TOKEN secret is not set"
+            exit 1
+          fi
+          echo "NPM_TOKEN is present"
+
       - name: Verify npm authentication
         run: npm whoami
 
       - name: Publish
-        run: npm publish --access public
+        run: npm publish --access public --registry https://registry.npmjs.org/
